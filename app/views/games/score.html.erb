@@ -1,0 +1,35 @@
+<h1>Score</h1>
+<p>your word is <%= "#{@word}" %></p>
+<% word_array = @word.upcase.split("") %>
+<% letter_array = @letter.split(",") %>
+
+
+<% require "json" %>
+<% require 'open-uri' %>
+<% url = "https://wagon-dictionary.herokuapp.com/#{@word}" %>
+<% json = open(url).read %>
+<% objs = JSON.parse(json) %>
+<% exist = objs["found"] %>
+<% include = true %>
+
+<% word_array.each do |letter| %>
+<% if letter_array.include?("#{letter}") %>
+  <% letter_array.slice!(letter_array.index("#{letter}")) %>
+<% else %>
+  <% include = false %>
+<% end %>
+<% end %>
+
+<% if word_array.length == 0 || word_array.length == 1 %>
+<p>This word does not exist!</p>
+<% elsif exist == false %>
+<p>This word does not exist!</p>
+<% elsif include == false%>
+<p>Your word is not made of the given letters!</p>
+<% else %>
+<p>Nice word!</p>
+<p>Points: <%=word_array.length * 100 %></p>
+<% end %>
+<div class="btn">
+<%= link_to "Play again!", new_path %>
+</div>
